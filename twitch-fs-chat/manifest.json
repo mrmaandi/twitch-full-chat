@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Twitch Fullscreen Chat Overlay",
+  "version": "1.0.0",
+  "description": "Shows Twitch chat (including 7TV emotes) as an overlay on the stream in fullscreen, with a quick-send box.",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Fullscreen chat options"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.twitch.tv/*"],
+      "js": ["content.js"],
+      "css": ["overlay.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
