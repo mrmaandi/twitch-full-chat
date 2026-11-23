@@ -1,6 +1,7 @@
-const DEFAULTS = { side: "left", background: true, bottom: 10, maxMessages: 8, underControls: true };
+const DEFAULTS = { side: "left", background: true, osrsTheme: false, bottom: 10, maxMessages: 8, underControls: true };
 
 const bg = document.getElementById("background");
+const osrsTheme = document.getElementById("osrsTheme");
 const bottom = document.getElementById("bottom");
 const bottomVal = document.getElementById("bottomVal");
 const maxMsg = document.getElementById("maxMessages");
@@ -13,6 +14,7 @@ function save() {
   chrome.storage.sync.set({
     side,
     background: bg.checked,
+    osrsTheme: osrsTheme.checked,
     bottom: Number(bottom.value),
     maxMessages: Number(maxMsg.value),
     underControls: under.checked,
@@ -22,6 +24,7 @@ function save() {
 chrome.storage.sync.get(DEFAULTS, (s) => {
   sideRadios.forEach((r) => (r.checked = r.value === s.side));
   bg.checked = s.background;
+  osrsTheme.checked = s.osrsTheme;
   bottom.value = s.bottom;
   bottomVal.textContent = s.bottom + " px";
   maxMsg.value = s.maxMessages;
@@ -31,6 +34,7 @@ chrome.storage.sync.get(DEFAULTS, (s) => {
 
 sideRadios.forEach((r) => r.addEventListener("change", save));
 bg.addEventListener("change", save);
+osrsTheme.addEventListener("change", save);
 bottom.addEventListener("input", () => {
   bottomVal.textContent = bottom.value + " px";
   save();
