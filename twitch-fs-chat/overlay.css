@@ -140,3 +140,32 @@
     1px 1px 2px #000, -1px -1px 2px #000,
     1px -1px 2px #000, -1px 1px 2px #000;
 }
+
+/* ---- Old School RuneScape theme ---- */
+#tfc-overlay.tfc-osrs {
+  font-family: "RuneScape UF", "RuneScape", "Courier New", monospace;
+  font-weight: 700;
+}
+
+#tfc-overlay.tfc-osrs .tfc-msg {
+  background-color: rgba(32, 24, 8, 0.82);
+  color: #ffff00;
+  border: 1px solid #80652b;
+  border-radius: 2px;
+  text-shadow: 1px 1px 0 #000;
+}
+
+#tfc-overlay.tfc-osrs.tfc-nobg .tfc-msg {
+  background: transparent;
+}
+
+#tfc-overlay.tfc-osrs .tfc-user {
+  color: #ff981f !important;
+}
+
+#tfc-overlay.tfc-osrs #tfc-input {
+  border-color: #80652b;
+  border-radius: 2px;
+  background: rgba(32, 24, 8, 0.9);
+  color: #ffff00;
+}

@@ -12,7 +12,7 @@
   const log = (...a) => console.log("[TFC]", ...a);
 
   // ---- User settings (set from the toolbar popup, saved in chrome.storage.sync) ----
-  const DEFAULTS = { side: "left", background: true, bottom: 10, maxMessages: 8, underControls: true, keepMessages: false };
+  const DEFAULTS = { side: "left", background: true, osrsTheme: false, bottom: 10, maxMessages: 8, underControls: true, keepMessages: false };
   let settings = { ...DEFAULTS };
 
   function clearMessageTimers(message) {
@@ -50,6 +50,7 @@
     if (!overlay) return;
     overlay.classList.toggle("tfc-right", settings.side === "right");
     overlay.classList.toggle("tfc-nobg", !settings.background);
+    overlay.classList.toggle("tfc-osrs", settings.osrsTheme);
     overlay.style.setProperty("--tfc-bottom", settings.bottom + "px");
     while (list && list.children.length > settings.maxMessages) removeMessage(list.firstChild);
     placeOverlay();
