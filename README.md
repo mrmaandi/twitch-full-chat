@@ -5,7 +5,7 @@ fullscreen.
 
 ## Install in Chrome or Brave
 
-1. Download `twitch-full-chat-v1.0.0.zip` from the
+1. Download `twitch-full-chat-v1.0.1.zip` from the
    [latest GitHub release](https://github.com/mrmaandi/twitch-full-chat/releases/latest).
 2. Extract the ZIP file.
 3. Open `chrome://extensions` in Chrome or `brave://extensions` in Brave.
@@ -23,7 +23,7 @@ From the repository root in PowerShell:
 
 ```powershell
 New-Item -ItemType Directory -Force dist | Out-Null
-Compress-Archive -Path twitch-fs-chat\* -DestinationPath dist\twitch-full-chat-v1.0.0.zip -Force
+Compress-Archive -Path twitch-fs-chat\* -DestinationPath dist\twitch-full-chat-v1.0.1.zip -Force
 ```
 
 The ZIP contains the extension files at its root.
@@ -40,9 +40,10 @@ For a subsequent release:
 3. Create and push a matching tag, for example:
 
    ```powershell
-   git tag v1.0.1
-   git push origin v1.0.1
+   git tag v1.0.2
+   git push origin v1.0.2
    ```
 
 The release will appear under the repository's GitHub Releases page when the
-workflow completes.
+workflow completes. In fullscreen, press **Alt+V** to open the settings over
+the video; press **Alt+V** or **Esc** to close them.

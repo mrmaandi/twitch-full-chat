@@ -40,3 +40,13 @@ maxMsg.addEventListener("input", () => {
   save();
 });
 under.addEventListener("change", save);
+
+if (window.parent !== window) {
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" ||
+        (event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && event.code === "KeyV")) {
+      event.preventDefault();
+      window.parent.postMessage({ type: "tfc-close-settings" }, "*");
+    }
+  }, true);
+}

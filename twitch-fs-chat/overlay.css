@@ -85,6 +85,51 @@
   white-space: pre-wrap;
 }
 
+#tfc-settings-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: auto !important;
+}
+
+#tfc-settings-dialog {
+  position: relative;
+  width: min(308px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+#tfc-settings-frame {
+  display: block;
+  width: 100%;
+  height: min(390px, calc(100vh - 24px));
+  border: 0;
+}
+
+#tfc-settings-close {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  z-index: 1;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: #2f2f35;
+  color: #efeff1;
+  font: 20px/26px Arial, sans-serif;
+  cursor: pointer;
+}
+
+#tfc-settings-close:hover { background: #45454f; }
+
 /* ---- user options ---- */
 #tfc-overlay.tfc-right { left: auto; right: 12px; }
 

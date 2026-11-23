@@ -5,6 +5,7 @@
 
   let enabled = true;
   let overlay, list, input, debugEl;
+  let settingsPanel, settingsFrame;
   const stats = { mutations: 0, linesSeen: 0, mirrored: 0, errors: 0, lastError: "", skippedNoName: 0 };
   const log = (...a) => console.log("[TFC]", ...a);
 
@@ -34,6 +35,51 @@
     } catch (err) {
       log("storage unavailable, using defaults", err);
     }
+  }
+
+  function closeSettingsPanel() {
+    settingsPanel?.remove();
+    settingsPanel = null;
+    settingsFrame = null;
+  }
+
+  function toggleSettingsPanel() {
+    const fullscreen = document.fullscreenElement;
+    if (!fullscreen || !enabled) return;
+    if (settingsPanel) {
+      closeSettingsPanel();
+      return;
+    }
+
+    settingsPanel = document.createElement("div");
+    settingsPanel.id = "tfc-settings-backdrop";
+    settingsPanel.setAttribute("role", "presentation");
+    settingsPanel.addEventListener("click", (event) => {
+      if (event.target === settingsPanel) closeSettingsPanel();
+    });
+
+    const dialog = document.createElement("div");
+    dialog.id = "tfc-settings-dialog";
+    dialog.setAttribute("role", "dialog");
+    dialog.setAttribute("aria-label", "Fullscreen chat settings");
+    dialog.setAttribute("aria-modal", "true");
+
+    settingsFrame = document.createElement("iframe");
+    settingsFrame.id = "tfc-settings-frame";
+    settingsFrame.title = "Fullscreen chat settings";
+    settingsFrame.src = chrome.runtime.getURL("popup.html");
+
+    const closeButton = document.createElement("button");
+    closeButton.id = "tfc-settings-close";
+    closeButton.type = "button";
+    closeButton.setAttribute("aria-label", "Close settings");
+    closeButton.textContent = "×";
+    closeButton.addEventListener("click", closeSettingsPanel);
+
+    dialog.append(settingsFrame, closeButton);
+    settingsPanel.appendChild(dialog);
+    fullscreen.appendChild(settingsPanel);
+    settingsFrame.focus();
   }
 
   // ---- Build overlay ----
@@ -147,6 +193,7 @@
       [300, 1000, 2500].forEach((ms) => setTimeout(placeOverlay, ms));
     } else {
       closeInput();
+      closeSettingsPanel();
       overlay.remove();
     }
   }
@@ -387,10 +434,20 @@
   // ---- Hotkeys ----
   document.addEventListener("keydown", (e) => {
     if (e.target === input) return;
+    if (e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey && e.code === "KeyV") {
+      const target = e.target;
+      if (target instanceof HTMLElement &&
+          (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) return;
+      e.preventDefault();
+      e.stopPropagation();
+      toggleSettingsPanel();
+      return;
+    }
     if (e.altKey && e.code === TOGGLE_CODE) {
       e.preventDefault();
       enabled = !enabled;
       overlay.classList.toggle("tfc-hidden", !enabled);
+      if (!enabled) closeSettingsPanel();
       placeOverlay();
       return;
     }
@@ -416,6 +473,13 @@
       openInput();
     }
   }, true);
+
+  window.addEventListener("message", (event) => {
+    if (settingsFrame && event.source === settingsFrame.contentWindow &&
+        event.data?.type === "tfc-close-settings") {
+      closeSettingsPanel();
+    }
+  });
 
   // ---- Init ----
   buildOverlay();
