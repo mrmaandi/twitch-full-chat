@@ -1,17 +1,50 @@
 (() => {
   // ---- Settings ----
   const MESSAGE_LIFETIME = 12000; // ms before a message fades
+  const MESSAGE_FADE_DURATION = 700;
   const TOGGLE_CODE = "KeyC";     // Alt/Option + C toggles overlay (physical key, Mac-safe)
 
   let enabled = true;
   let overlay, list, input, debugEl;
   let settingsPanel, settingsFrame;
+  const messageTimers = new Map();
   const stats = { mutations: 0, linesSeen: 0, mirrored: 0, errors: 0, lastError: "", skippedNoName: 0 };
   const log = (...a) => console.log("[TFC]", ...a);
 
   // ---- User settings (set from the toolbar popup, saved in chrome.storage.sync) ----
-  const DEFAULTS = { side: "left", background: true, osrsTheme: false, bottom: 10, maxMessages: 8, underControls: true };
+  const DEFAULTS = { side: "left", background: true, osrsTheme: false, bottom: 10, maxMessages: 8, underControls: true, keepMessages: false };
   let settings = { ...DEFAULTS };
+
+  function clearMessageTimers(message) {
+    const timers = messageTimers.get(message);
+    if (!timers) return;
+    if (timers.fade) clearTimeout(timers.fade);
+    if (timers.remove) clearTimeout(timers.remove);
+    messageTimers.delete(message);
+  }
+
+  function removeMessage(message) {
+    clearMessageTimers(message);
+    message.remove();
+  }
+
+  function scheduleMessageExpiry(message) {
+    const timers = { fade: null, remove: null };
+    timers.fade = setTimeout(() => {
+      message.classList.add("tfc-fade");
+      timers.remove = setTimeout(() => removeMessage(message), MESSAGE_FADE_DURATION);
+    }, MESSAGE_LIFETIME);
+    messageTimers.set(message, timers);
+  }
+
+  function updateMessageLifetimes() {
+    if (!list) return;
+    for (const message of [...list.children]) {
+      clearMessageTimers(message);
+      message.classList.remove("tfc-fade");
+      if (!settings.keepMessages) scheduleMessageExpiry(message);
+    }
+  }
 
   function applySettings() {
     if (!overlay) return;
@@ -19,18 +52,22 @@
     overlay.classList.toggle("tfc-nobg", !settings.background);
     overlay.classList.toggle("tfc-osrs", settings.osrsTheme);
     overlay.style.setProperty("--tfc-bottom", settings.bottom + "px");
-    while (list && list.children.length > settings.maxMessages) list.firstChild.remove();
+    while (list && list.children.length > settings.maxMessages) removeMessage(list.firstChild);
     placeOverlay();
   }
 
   function loadSettings() {
     try {
       chrome.storage.sync.get(DEFAULTS, (s) => {
+        const keepMessagesChanged = settings.keepMessages !== s.keepMessages;
         settings = { ...DEFAULTS, ...s };
+        if (keepMessagesChanged) updateMessageLifetimes();
         applySettings();
       });
       chrome.storage.onChanged.addListener((changes) => {
+        const keepMessagesChanged = Object.prototype.hasOwnProperty.call(changes, "keepMessages");
         for (const k in changes) settings[k] = changes[k].newValue;
+        if (keepMessagesChanged) updateMessageLifetimes();
         applySettings();
       });
     } catch (err) {
@@ -373,10 +410,8 @@
     stats.mirrored++;
     list.appendChild(div);
 
-    while (list.children.length > settings.maxMessages) list.firstChild.remove();
-
-    setTimeout(() => div.classList.add("tfc-fade"), MESSAGE_LIFETIME);
-    setTimeout(() => div.remove(), MESSAGE_LIFETIME + 700);
+    while (list.children.length > settings.maxMessages) removeMessage(list.firstChild);
+    if (!settings.keepMessages) scheduleMessageExpiry(div);
   }
 
   let chatObserver = null;

@@ -5,45 +5,21 @@ fullscreen.
 
 ## Install in Chrome or Brave
 
-1. Download `twitch-full-chat-v1.0.1.zip` from the
-   [latest GitHub release](https://github.com/mrmaandi/twitch-full-chat/releases/latest).
-2. Extract the ZIP file.
+1. Download the latest ZIP from the
+   [GitHub Releases page](https://github.com/mrmaandi/twitch-full-chat/releases).
+2. Extract it.
 3. Open `chrome://extensions` in Chrome or `brave://extensions` in Brave.
 4. Turn on **Developer mode**, choose **Load unpacked**, and select the extracted
    `twitch-fs-chat` folder.
 
-Chromium browsers do not install extension ZIP files by dropping them into the
-browser. The extracted folder is loaded through the extensions page. A
-drag-and-drop `.crx` package requires signing and is not produced by this
-project.
+## Chat settings
 
-## Build a ZIP locally
+Press **Alt+V** in fullscreen to open the settings over the video. Enable **Keep
+messages on screen** to keep messages visible until newer messages push them
+out at the configured maximum. Disable it to resume the usual timed fade.
 
-From the repository root in PowerShell:
+## Releases
 
-```powershell
-New-Item -ItemType Directory -Force dist | Out-Null
-Compress-Archive -Path twitch-fs-chat\* -DestinationPath dist\twitch-full-chat-v1.0.1.zip -Force
-```
-
-The ZIP contains the extension files at its root.
-
-## Publish a release
-
-Each `v*` version tag creates a GitHub Release with a ZIP asset. The workflow
-checks that the tag version matches `twitch-fs-chat/manifest.json`.
-
-For a subsequent release:
-
-1. Update the manifest version to the new `MAJOR.MINOR.PATCH` version.
-2. Commit and push the changes to `main`.
-3. Create and push a matching tag, for example:
-
-   ```powershell
-   git tag v1.0.2
-   git push origin v1.0.2
-   ```
-
-The release will appear under the repository's GitHub Releases page when the
-workflow completes. In fullscreen, press **Alt+V** to open the settings over
-the video; press **Alt+V** or **Esc** to close them.
+Each published release includes a ZIP ready to extract and load unpacked. New
+release versions use `MAJOR.MINOR.PATCH` numbering and are published from GitHub
+Actions when a matching `vMAJOR.MINOR.PATCH` tag is pushed.

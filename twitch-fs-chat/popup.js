@@ -1,4 +1,4 @@
-const DEFAULTS = { side: "left", background: true, osrsTheme: false, bottom: 10, maxMessages: 8, underControls: true };
+const DEFAULTS = { side: "left", background: true, osrsTheme: false, bottom: 10, maxMessages: 8, underControls: true, keepMessages: false };
 
 const bg = document.getElementById("background");
 const osrsTheme = document.getElementById("osrsTheme");
@@ -7,6 +7,7 @@ const bottomVal = document.getElementById("bottomVal");
 const maxMsg = document.getElementById("maxMessages");
 const maxVal = document.getElementById("maxVal");
 const under = document.getElementById("underControls");
+const keepMessages = document.getElementById("keepMessages");
 const sideRadios = document.querySelectorAll('input[name="side"]');
 
 function save() {
@@ -18,6 +19,7 @@ function save() {
     bottom: Number(bottom.value),
     maxMessages: Number(maxMsg.value),
     underControls: under.checked,
+    keepMessages: keepMessages.checked,
   });
 }
 
@@ -30,6 +32,7 @@ chrome.storage.sync.get(DEFAULTS, (s) => {
   maxMsg.value = s.maxMessages;
   maxVal.textContent = s.maxMessages;
   under.checked = s.underControls;
+  keepMessages.checked = s.keepMessages;
 });
 
 sideRadios.forEach((r) => r.addEventListener("change", save));
@@ -44,6 +47,7 @@ maxMsg.addEventListener("input", () => {
   save();
 });
 under.addEventListener("change", save);
+keepMessages.addEventListener("change", save);
 
 if (window.parent !== window) {
   window.addEventListener("keydown", (event) => {
